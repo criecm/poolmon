@@ -79,6 +79,11 @@ if (@SSL_PORTS) {
 check_pidfile();
 unless($NOFORK){
     daemonize();
+} else {
+    # Disable buffering of stdout when running in foreground mode
+    my $ofh = select STDOUT;
+    $| = 1;
+    select $ofh;
 }
 
 while(1){
