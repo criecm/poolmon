@@ -24,8 +24,8 @@
 # Source function library.
 . /etc/init.d/functions
 
-if [ -f /etc/dovecot/poolmon -a $UID -eq 0 ]; then
-    . /etc/dovecot/poolmon
+if [ -f /etc/dovecot/poolmon.conf -a $UID -eq 0 ]; then
+    . /etc/dovecot/poolmon.conf
 fi
 
 RETVAL=0
