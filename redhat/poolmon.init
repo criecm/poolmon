@@ -13,7 +13,7 @@
 # Provides: poolmon
 # Required-Start: $network
 # Required-Stop: $network
-# Default-Start: 
+# Default-Start:
 # Default-Stop: 0 1 2 3 4 5 6
 # Short-Description: start and stop Poolmon mailserver pool monitor
 # Description: Poolmon monitors a pool of Dovecot director mailservers
@@ -24,13 +24,13 @@
 # Source function library.
 . /etc/init.d/functions
 
-if [ -f /etc/sysconfig/poolmon -a $UID -eq 0 ]; then
-    . /etc/sysconfig/poolmon
+if [ -f /etc/dovecot/poolmon -a $UID -eq 0 ]; then
+    . /etc/dovecot/poolmon
 fi
 
 RETVAL=0
 prog="Poolmon"
-exec="/usr/sbin/poolmon"
+exec="/usr/local/sbin/poolmon"
 pidfile="/var/run/poolmon.pid"
 lockfile="/var/lock/subsys/poolmon"
 
@@ -99,4 +99,3 @@ case "$1" in
 esac
 
 exit $RETVAL
-
