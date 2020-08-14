@@ -242,12 +242,13 @@ sub scan_port {
     ($port, $prot) = get_port_proto($port);
     $sock = $sock->new(PeerAddr => $host,
                        PeerPort => $port,
-                       Timeout  => $TIMEOUT);
+                       Timeout  => $TIMEOUT,
+                       SSL_verify_mode => SSL_VERIFY_PEER);
 
     $ret = eval {
-        local $SIG{ALRM} = sub { 
+        local $SIG{ALRM} = sub {
             $DEBUG && write_log("Timeout");
-            die "Timeout\n"; 
+            die "Timeout\n";
         };
         alarm $TIMEOUT;
         if ($sock){
