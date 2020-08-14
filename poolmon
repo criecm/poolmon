@@ -243,7 +243,7 @@ sub scan_port {
     $sock = $sock->new(PeerAddr => $host,
                        PeerPort => $port,
                        Timeout  => $TIMEOUT,
-                       SSL_verify_mode => SSL_VERIFY_PEER);
+                       SSL_verify_mode => 1);
 
     $ret = eval {
         local $SIG{ALRM} = sub {
