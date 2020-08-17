@@ -36,6 +36,7 @@ my @PORTS;
 my @SSL_PORTS;
 my $DEBUG    = 0;
 my $NOFORK   = 0;
+my $DRY_RUN  = 0;
 my $TIMEOUT  = 5;
 my $INTERVAL = 30;
 my $PIDOPEN  = 0;
@@ -58,6 +59,7 @@ GetOptions('p|port=s'     => \@PORTS,
            'k|lockfile=s' => \$PIDFILE,
            'i|interval=i' => \$INTERVAL,
            'f|foreground' => \$NOFORK,
+           'n|dry-run'    => \$DRY_RUN,
            'S|socket=s'   => \$DIRECTOR,
            'h|help|?'     => \&help,
            'c|credfile=s' => \&opt_credfile,
@@ -108,6 +110,7 @@ all host checks, its status is restored to 'up'.
 Arguments:
   -d, --debug           Show additional logging (default: false)
   -f, --foreground      Run in foreground (default: false)
+  -n, --dry-run         Just log proposed actions (default: false)
   -h, --help            This text
   -i, --interval=SECS   Scan interval in seconds (default: 30)
   -k, --lockfile=PATH   PID/lockfile location (default: /var/run/poolmon.pid)
@@ -395,32 +398,40 @@ sub get_port_proto {
 # on their own.
 sub disable_host {
     my $host = shift || return;
-    my $sock = director_connect() || return;
-    print $sock "HOST-DOWN\t$host\n";
-    if (readline($sock) eq "OK\n") {
-        print $sock "HOST-FLUSH\t$host\n";
-        if (readline($sock) ne "OK\n") {
-            write_err("Failed to flush $host");
+    unless($DRY_RUN){
+        my $sock = director_connect() || return;
+        print $sock "HOST-DOWN\t$host\n";
+        if (readline($sock) eq "OK\n") {
+            print $sock "HOST-FLUSH\t$host\n";
+            if (readline($sock) ne "OK\n") {
+                write_err("Failed to flush $host");
+            }
+        } else {
+            write_err("Failed to mark $host as down");
         }
-    } else {
-        write_err("Failed to mark $host as down");
-    }
-    close($sock);
-    undef($sock);
-    write_log("$host disabled");
+        close($sock);
+        undef($sock);
+        write_log("$host disabled");
+      } else {
+          write_log("DRY-RUN: $host disabled");
+      }
 }
 
 # Mark host as up
 sub enable_host {
     my $host = shift || return;
-    my $sock = director_connect() || return;
-    print $sock "HOST-UP\t$host\n";
-    if (readline($sock) ne "OK\n") {
-        write_err("Failed to mark $host as up");
+    unless($DRY_RUN){
+        my $sock = director_connect() || return;
+        print $sock "HOST-UP\t$host\n";
+        if (readline($sock) ne "OK\n") {
+            write_err("Failed to mark $host as up");
+        }
+        close($sock);
+        undef($sock);
+        write_log("$host enabled");
+    } else {
+        write_log("DRY-RUN: $host enabled");
     }
-    close($sock);
-    undef($sock);
-    write_log("$host enabled");
 }
 
 # Append a line to stdout
