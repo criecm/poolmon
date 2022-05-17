@@ -1,0 +1,28 @@
+#!/bin/sh
+#
+# PROVIDE: poolmon
+# REQUIRE: dovecot
+# KEYWORD: shutdown
+#
+# Define poolmon_* variables in one of these files:
+#       /etc/rc.conf
+#       /etc/rc.conf.local
+#       /etc/rc.conf.d/poolmon
+. /etc/rc.subr
+
+name=poolmon
+rcvar=poolmon_enable
+
+# read configuration and set defaults
+load_rc_config ${name}
+: ${poolmon_enable:="NO"}
+: ${poolmon_flags:=""}
+: ${poolmon_pidfile:="/var/run/poolmon.pid"}
+: ${poolmon_lockfile:="/var/run/poolmon.lck"}
+: ${poolmon_user:="root"}
+
+command="/usr/local/sbin/poolmon"
+command_interpreter="perl"
+
+run_rc_command "$1"
+
