@@ -486,8 +486,8 @@ sub remove_pidfile {
     if ($$ == $ORIGPID) {
         write_log('Shutting down');
         unlink($PIDFILE);
+        exit;
     }
-    exit;
 }
 
 sub opt_credfile {
