@@ -49,6 +49,8 @@ my $USERNAME = '';
 my $PASSWORD = '';
 my $LMTP_FROM = '';
 my $LMTP_TO = '';
+my $WEIGHTS;
+my %WEIGHTS;
 
 Getopt::Long::Configure("bundling");
 GetOptions('p|port=s'     => \@PORTS,
