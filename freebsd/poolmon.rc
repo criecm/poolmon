@@ -13,6 +13,8 @@
 name=poolmon
 rcvar=poolmon_enable
 
+start_precmd="${name}_prestart"
+
 # read configuration and set defaults
 load_rc_config ${name}
 : ${poolmon_enable:="NO"}
@@ -22,7 +24,13 @@ load_rc_config ${name}
 : ${poolmon_user:="root"}
 
 command="/usr/local/sbin/poolmon"
-command_interpreter="perl"
+command_interpreter="/usr/local/bin/perl"
 
+poolmon_prestart() {
+  if ! head -1 $command | grep -q "/usr/local/bin/perl"; then
+    echo "patch perl path in $command"
+    sed -i '' 's@#!\/.*perl@#!/usr/local/bin/perl@' $command
+  fi
+}
 run_rc_command "$1"
 
