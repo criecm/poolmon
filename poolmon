@@ -1,4 +1,4 @@
-#!/usr/local/bin/perl
+#!/usr/bin/env perl
 # vim: ai ts=4 sts=4 et sw=4
 #
 # Director mailserver pool monitoring script, meant to roughly duplicate the
